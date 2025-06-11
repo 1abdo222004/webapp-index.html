@@ -28,8 +28,8 @@
 
   <h2>Telegram WebApp initData:</h2>
   <pre id="output">جارٍ التحميل...</pre>
-  <pre id="response">جار ارسال 🌹🫶</pre>
-  <button onclick="sendToServer()">إرسال initData إلى السيرفر</button>
+  <pre id="response">جارٍ الإرسال...</pre>
+  <button onclick="sendToServer()">إرسال initData وإرسال "تم" للبوت</button>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script>
@@ -48,23 +48,8 @@
       .then(serverRes => {
         document.getElementById("response").textContent = "✅ تم الإرسال:\n" + serverRes;
 
-        // استخراج user_id من initData
-        const userIdMatch = initData.match(/id%22%3A(\d+)/);
-        const userId = userIdMatch ? userIdMatch[1] : null;
-
-        if (userId) {
-          // إرسال رسالة للبوت
-          fetch(`https://api.telegram.org/bot7265961846:AAHw3oFCOwiZAes9Eu8h6Ghz_45DMFOzPr8/sendMessage`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              chat_id: userId,
-              text: "✅ تم استلام البيانات بنجاح!"
-            })
-          });
-        }
+        // إرسال "تم" للبوت عبر sendData
+        Telegram.WebApp.sendData("/strat00");
       })
       .catch(err => {
         document.getElementById("response").textContent = "❌ خطأ في الإرسال: " + err;
