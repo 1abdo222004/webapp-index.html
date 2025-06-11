@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify, render_template
 
 app = Flask(name)
 
-تخزين مؤقت للمعلومات
 
 saved_data = {}
 
