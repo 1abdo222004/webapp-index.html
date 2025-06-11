@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>عرض بيانات Telegram WebApp</title>
@@ -23,51 +24,37 @@
     }
   </style>
 </head>
-<body>  <h2>Telegram WebApp initData:</h2>
+<body>
+
+  <h2>Telegram WebApp initData:</h2>
   <pre id="output">جارٍ التحميل...</pre>
   <pre id="response">جارٍ الإرسال...</pre>
-  <button onclick="sendToServer()">إرسال البيانات إلى السيرفر</button>  <script src="https://telegram.org/js/telegram-web-app.js"></script>  <script>
+  <button onclick="sendToServer()">إرسال initData إلى السيرفر</button>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
     const initData = Telegram.WebApp.initData || "لا يوجد initData";
     document.getElementById("output").textContent = initData;
 
     function sendToServer() {
-      const headers = {
-        'Content-Type': 'application/json',
-        'x-telegram-bot-api-secret-token': initData
-      };
-
-      const data = {
-        referral_code: "5343064159"
-      };
-
-      fetch('https://fruitcryptofarm.xyz/api/auth/telegram', {
+      fetch('/id', {
         method: 'POST',
-        headers: headers,
-        body: JSON.stringify(data)
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          initData: initData
+        })
       })
       .then(res => res.text())
-      .then(apiResponse => {
-        fetch('/id', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            initData: initData,
-            api_response: apiResponse
-          })
-        })
-        .then(res => res.text())
-        .then(serverRes => {
-          document.getElementById("response").textContent = "✅ تم الإرسال إلى السيرفر:\n" + serverRes;
-        })
-        .catch(err => {
-          document.getElementById("response").textContent = "❌ خطأ في الإرسال إلى السيرفر: " + err;
-        });
+      .then(serverRes => {
+        document.getElementById("response").textContent = "✅ تم الإرسال إلى السيرفر:\n" + serverRes;
       })
       .catch(err => {
-        document.getElementById("response").textContent = "❌ خطأ في API الخارجية: " + err;
+        document.getElementById("response").textContent = "❌ خطأ في الإرسال إلى السيرفر: " + err;
       });
     }
-  </script></body>
+  </script>
+
+</body>
 </html>
